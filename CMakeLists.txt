@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 23)
 find_package(ixwebsocket CONFIG REQUIRED)
 
 add_executable(SnakeClient main.cpp
-        client/include/ClientManager.h)
+        client/include/ClientManager.h
+        client/include/utils.h)
 target_include_directories(SnakeClient PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/client/include)
 
