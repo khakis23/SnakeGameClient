@@ -1,0 +1,51 @@
+# Build artifacts
+/build/
+/cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+CMakeScripts/
+Testing/
+Makefile
+CTestTestfile.cmake
+install_manifest.txt
+compile_commands.json
+compile_flags.txt
+
+# Binaries
+*.exe
+*.out
+*.obj
+*.o
+*.a
+*.so
+*.dll
+*.dylib
+
+# CMake presets
+CMakeUserPresets.json
+
+# CLion / JetBrains
+.idea/
+*.iml
+
+# Xcode
+*.xcworkspace/
+*.xcodeproj/
+*.xcuserdata/
+
+# VSCode
+.vscode/
+
+# MacOS junk
+.DS_Store
+
+# Logs
+*.log
+
+# Generated
+*.pch
+*.pdb
+*.ilk
+
+# vcpkg artifacts
+/vcpkg_installed/
