@@ -6,6 +6,8 @@
 
 
 enum GameCodes {
+    SEAT,
+
     // To Client
     START,
     COLLISION,

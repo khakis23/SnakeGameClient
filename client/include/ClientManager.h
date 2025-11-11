@@ -23,7 +23,7 @@ private:
 
     int room_seat;
 
-    void handleMessage(std::string &msg);   // message will be modified
+    void handleMessage(std::string msg);   // message will be modified
     void startGame(int seat);
 };
 
@@ -43,8 +43,7 @@ void ClientManager::run() {
             }
             else if (msg->type == WebSocketMessageType::Message) {
                 std::cout << "recv: " << msg->str << "\n";
-                if (msg->str == "send room id")
-                    ws.sendText("room1");
+                handleMessage(msg->str);
             }
             else if (msg->type == WebSocketMessageType::Error) {
                 std::cerr << "error: " << msg->errorInfo.reason << "\n";
@@ -57,7 +56,7 @@ void ClientManager::run() {
     ws.start();
 }
 
-void ClientManager::handleMessage(std::string &msg) {
+void ClientManager::handleMessage(std::string msg) {
     auto msg_map = decodeJSON(msg);
 
     for (auto& [key, val] : msg_map) {
@@ -75,8 +74,11 @@ void ClientManager::handleMessage(std::string &msg) {
                 std::cout << "Snake grew\n";
                 break;
             case START:
+                std::cout << val << std::endl;
                 startGame(std::stoi(val));
                 break;
+            case SEAT:
+                std::cout << "Seat: " << val << "\n";
         }
     }
 }
@@ -88,7 +90,9 @@ void ClientManager::startGame(int seat) {
 void ClientManager::debugManualInput() {
     std::string key, val;
     while (std::cin >> key >> val) {
-        ws.sendText(toJSON<int>(std::unordered_map<int, std::string>{{std::stoi(key), val}}));
+        auto send_map = std::unordered_map<int, std::string>{{std::stoi(key), val}};
+        send_map[SEAT] = std::to_string(room_seat);
+        ws.sendText(toJSON(send_map));
         std::cin.ignore();
         std::cin.clear();
     }
