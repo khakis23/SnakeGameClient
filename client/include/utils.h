@@ -5,22 +5,6 @@
 #include <type_traits>
 
 
-enum GameCodes {
-    SEAT,
-
-    // To Client
-    START,
-    COLLISION,
-    APPLE,
-    GROW,
-
-    // To Server
-    MOVE,
-    READY,
-    RESET,
-};
-
-
 struct Vec2 {
     int x;
     int y;
@@ -61,7 +45,7 @@ std::unordered_map<std::string, std::string> decodeJSON(T &json) {
      * Decode BASIC JSON string(_view)'s -> {"key":"value", "string": "1,2"}
      */
     // deal with using a template and invalid types
-    std::cout << "json: " << json << std::endl;
+    // std::cout << "json: " << json << std::endl;
     try {
         if (json.empty() || json.size() <= 2)   // yes this will probably crash if not a stringtype,
             return {};
@@ -103,7 +87,7 @@ std::unordered_map<std::string, std::string> decodeJSON(T &json) {
 }
 
 
-Vec2 strToVec2(std::string str) {
+inline Vec2 strToVec2(std::string str) {
     std::cout << "str: " << str << std::endl;
     int mid = str.find(',');
     if (mid == std::string::npos)
