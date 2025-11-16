@@ -10,12 +10,13 @@
 
 class WSClient {
 public:
-    WSClient(const std::string& url, const std::string& room_id,
+    WSClient(const std::string& url,
         std::queue<std::pair<int, std::string>>& incom,
         std::queue<std::pair<int, std::string>>& outgo);
+    void setRoomId(const std::string& rid);
     void run();   // non-blocking
     void stop();
-    void send(const std::string &msg);
+    void send();
 
     void debugManualInput();
 private:

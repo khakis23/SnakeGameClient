@@ -2,39 +2,40 @@
 #include "gamecodes.h"
 
 
-WSClient::WSClient(const std::string &url, const std::string &room_id,
+WSClient::WSClient(const std::string &url,
     std::queue<std::pair<int, std::string>> &incom,
     std::queue<std::pair<int, std::string>> &outgo) :
     url(url),
-    room_id(room_id),
     incoming(incom),
     outgoing(outgo) {}
 
+void WSClient::setRoomId(const std::string &rid) { room_id = rid; }
+
 void WSClient::run() {
+    if (room_id.empty())
+        throw std::runtime_error("Room ID not set.");
+
     ws.setUrl(url);
     ws.setOnMessageCallback([this](const ix::WebSocketMessagePtr& msg) {
-            using ix::WebSocketMessageType;
-
-            if (msg->type == WebSocketMessageType::Open) {
+            if (msg->type == ix::WebSocketMessageType::Open) {
                 ws.sendText(room_id);
                 std::cout << "Connected\n";
             }
-            else if (msg->type == WebSocketMessageType::Message) {
+            else if (msg->type == ix::WebSocketMessageType::Message) {
                 std::cout << "recv: " << msg->str << "\n";
                 handleMessage(msg->str);
             }
-            else if (msg->type == WebSocketMessageType::Error) {
+            else if (msg->type == ix::WebSocketMessageType::Error) {
                 std::cerr << "error: " << msg->errorInfo.reason << "\n";
-
             }
-            else if (msg->type == WebSocketMessageType::Close) {
+            else if (msg->type == ix::WebSocketMessageType::Close) {
                 std::cout << "Disconnected\n";
             }
         });
     ws.start();
 }
 
-void WSClient::send(const std::string &msg) {
+void WSClient::send() {
     if (outgoing.empty())
         return;
 
@@ -43,7 +44,7 @@ void WSClient::send(const std::string &msg) {
         msg_map[outgoing.front().first] = outgoing.front().second;
         outgoing.pop();
     }
-    msg_map[SEAT] = std::to_string(room_seat);   // must send seat each time
+    // msg_map[SEAT] = std::to_string(room_seat);   // must send seat each time NOT ANYMORE
 
     ws.sendText(toJSON(msg_map));
 }
@@ -89,7 +90,7 @@ void WSClient::debugManualInput() {
     std::string key, val;
     while (std::cin >> key >> val) {
         auto send_map = std::unordered_map<int, std::string>{{std::stoi(key), val}};
-        send_map[SEAT] = std::to_string(room_seat);
+        // send_map[SEAT] = std::to_string(room_seat);
         ws.sendText(toJSON(send_map));
         std::cin.ignore();
         std::cin.clear();
