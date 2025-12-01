@@ -22,7 +22,7 @@ void WSClient::run() {
                 std::cout << "Connected\n";
             }
             else if (msg->type == ix::WebSocketMessageType::Message) {
-                std::cout << "recv: " << msg->str << "\n";
+                // std::cout << "recv: " << msg->str << "\n";
                 handleMessage(msg->str);
             }
             else if (msg->type == ix::WebSocketMessageType::Error) {

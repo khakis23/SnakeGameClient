@@ -11,6 +11,9 @@ struct Vec2 {
     bool operator==(const Vec2 &other) const {
         return x == other.x && y == other.y;
     }
+    Vec2 operator+(const Vec2 &other) const {
+        return {x + other.x, y + other.y};
+    }
     friend std::ostream& operator<<(std::ostream& os, const Vec2& v) {
         os << v.x << ", " << v.y;
         return os;
@@ -81,14 +84,14 @@ std::unordered_map<std::string, std::string> decodeJSON(T &json) {
 
         map[key] = val;
         start = end + 2;
-        std::cout << key << " : " << val << "\n";   // debugging
+        // std::cout << key << " : " << val << "\n";   // debugging
     }
     return map;
 }
 
 
 inline Vec2 strToVec2(std::string str) {
-    std::cout << "str: " << str << std::endl;
+    // std::cout << "str: " << str << std::endl;
     int mid = str.find(',');
     if (mid == std::string::npos)
         throw std::runtime_error("Invalid Vec2: missing ','");

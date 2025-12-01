@@ -11,10 +11,15 @@ enum GameCodes {
     COLLISION,
     APPLE,
     GROW,
+    SCORE,   // ex.  "<P1 score>,<P2 score>"
+    SET,
+    DISCONNECT,
+
+    // both
+    MOVE,
 
     // To Server
-    MOVE,
-    READY,    // TODO remove?
+    READY,
     RESET,
 };
 

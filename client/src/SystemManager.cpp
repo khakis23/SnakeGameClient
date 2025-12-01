@@ -1,20 +1,22 @@
 #include "SystemManager.h"
+#include "TylerSnakeGame.h"
 
 
 SystemManager::SystemManager() = default;
 
 void SystemManager::run() {
-    // TODO placeholder for getting room ID
-    std::string room_id;
-    std::cout << "Enter room ID: ";
-    std::cin >> room_id;
-    std::cout << std::endl;
-    std::cin.clear();
-    std::cin.ignore();
+    // Game setup (menu)
+    Game game(incoming, outgoing);
+    SetTargetFPS(60);
+    const auto user_inputs = game.userSetup();   // IP, Port, RoomID, PlayerName
 
-    // start WS
-    WSClient client("ws://localhost:9001", incoming, outgoing);
-    client.setRoomId(room_id);
+    for (auto& input : user_inputs) {
+        std::cout << input << '\n';
+    }
+
+    // Start WS and connect to room
+    WSClient client("ws://" + user_inputs[0] + ":" + user_inputs[1], incoming, outgoing);
+    client.setRoomId(user_inputs[2]);
     try {
         client.run();   // non-blocking
     }
@@ -24,25 +26,25 @@ void SystemManager::run() {
     }
     std::cout << "Websocket Running..." << std::endl;
 
-    // start game (blocking)
-    // client.debugManualInput();
+    // Run Game
+    constexpr double tick_rate = 1.0 / 7.0;   // TODO make this a user editable value
+    double timer = 0.0;
 
-    /*
-     * TODO
-     *  This is the old way of doing this, but I have a much cleaner and scalable idea...
-     *
-     *      // OLD WAY
-     *      SnakeGame game(incoming, outgoing);
-     *      game.run();   // blocking, no way to client.send()
-     *
-     *      // NEW WAY
-     *      SnakeGame game(incoming, outgoing);
-     *      while (game.running) {  // yes, make this a public variable since we are checking it so often, much faster than calling a method
-     *          game.update();
-     *          game...             // anything else it might (or not) need to do
-     *          game.tick(FPS);     // ...or whatever RayLib uses (may want a getFPS() and before this while loop set FPS=game.getFPS(); )
-     *          client.send();      // client has a reference to outgoing, this will send everything game pushed to outgoing
-     *       }
-     *       game.stop();    // this is crutial since game no longer knows if it's running or not
-     */
+    while (!game.quit) {
+        const double dt = GetFrameTime();
+        timer += dt;
+
+        game.handleInput();
+
+        // Run game logic at fixed FPS
+        if (timer >= tick_rate) {
+            timer -= tick_rate;
+            game.update();
+        }
+
+        client.send();
+        game.draw();
+    }
+
+    game.stop();
 }

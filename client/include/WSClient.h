@@ -23,8 +23,8 @@ private:
     ix::WebSocket ws;
     std::string url;
     std::string room_id;
-    std::queue<std::pair<int, std::string>> incoming;
-    std::queue<std::pair<int, std::string>> outgoing;
+    std::queue<std::pair<int, std::string>>& incoming;
+    std::queue<std::pair<int, std::string>>& outgoing;
 
     int room_seat;
 
