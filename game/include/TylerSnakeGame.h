@@ -9,6 +9,17 @@
 #include "Menu.h"
 
 
+/*
+ * TODO
+ *  - Make Pretty
+ *  - Make Customizable rounds (menu)
+ *  - Make customizable board_size **complicated-ish
+ *  - resizable window
+ *  - player names! * easy!
+ *  - waiting on opponent after Menu ends
+ *  - make work on Windows 11!
+ */
+
 constexpr int CELL_SIZE = 20;
 constexpr int BOARD_SIZE = 30;   // must match server's GAME_SIZE
 constexpr int FONT_SIZE = 18;

@@ -1,4 +1,3 @@
-
 #ifndef SNAKECLIENT_CLIENTMANAGER_H
 #define SNAKECLIENT_CLIENTMANAGER_H
 #include <thread>

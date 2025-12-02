@@ -27,7 +27,7 @@ void SystemManager::run() {
     std::cout << "Websocket Running..." << std::endl;
 
     // Run Game
-    constexpr double tick_rate = 1.0 / 7.0;   // TODO make this a user editable value
+    constexpr double tick_rate = 1.0 / 7.0;   // TODO make this a user editable value?? leave hardcoded?
     double timer = 0.0;
 
     while (!game.quit) {
