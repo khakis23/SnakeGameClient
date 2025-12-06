@@ -6,7 +6,7 @@ SystemManager::SystemManager() = default;
 
 void SystemManager::run() {
     // Game setup (menu)
-    Game game(incoming, outgoing);
+    Game game(incoming, outgoing, incoming_mtx, outgoing_mtx);
     SetTargetFPS(60);
     const auto user_inputs = game.userSetup();   // IP, Port, RoomID, PlayerName
 
@@ -15,7 +15,8 @@ void SystemManager::run() {
     }
 
     // Start WS and connect to room
-    WSClient client("ws://" + user_inputs[0] + ":" + user_inputs[1], incoming, outgoing);
+    std::cout << "Starting WebScoket..." << std::endl;
+    WSClient client("ws://" + user_inputs[0] + ":" + user_inputs[1], incoming, outgoing, incoming_mtx, outgoing_mtx);
     client.setRoomId(user_inputs[2]);
     try {
         client.run();   // non-blocking

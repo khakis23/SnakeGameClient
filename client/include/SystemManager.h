@@ -13,6 +13,8 @@ public:
 private:
     std::queue<std::pair<int, std::string>> incoming = {};
     std::queue<std::pair<int, std::string>> outgoing = {};
+    std::mutex incoming_mtx;
+    std::mutex outgoing_mtx;
 };
 
 

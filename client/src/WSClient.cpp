@@ -1,17 +1,23 @@
 #include "WSClient.h"
 #include "gamecodes.h"
+#include <ixwebsocket/IXNetSystem.h>
 
 
 WSClient::WSClient(const std::string &url,
     std::queue<std::pair<int, std::string>> &incom,
-    std::queue<std::pair<int, std::string>> &outgo) :
+    std::queue<std::pair<int, std::string>> &outgo,
+    std::mutex &incom_mtx, std::mutex &outgo_mtx) :
     url(url),
     incoming(incom),
-    outgoing(outgo) {}
+    outgoing(outgo),
+    incoming_mtx(incom_mtx),
+    outgoing_mtx(outgo_mtx){}
 
 void WSClient::setRoomId(const std::string &rid) { room_id = rid; }
 
 void WSClient::run() {
+    ix::initNetSystem();
+
     if (room_id.empty())
         throw std::runtime_error("Room ID not set.");
 
@@ -39,6 +45,7 @@ void WSClient::send() {
     if (outgoing.empty())
         return;
 
+    std::lock_guard<std::mutex> lock(outgoing_mtx);
     std::unordered_map<int, std::string> msg_map = {};
     while (!outgoing.empty()) {
         msg_map[outgoing.front().first] = outgoing.front().second;
@@ -52,6 +59,7 @@ void WSClient::send() {
 void WSClient::handleMessage(std::string msg) {
     auto msg_map = decodeJSON(msg);
 
+    std::lock_guard<std::mutex> lock(incoming_mtx);
     for (auto& [key_str, val] : msg_map) {
         incoming.emplace(std::stoi(key_str), val);
 

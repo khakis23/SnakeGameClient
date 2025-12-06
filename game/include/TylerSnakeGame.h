@@ -40,7 +40,9 @@ struct Apple {
 
 class Game {
 public:
-    Game(std::queue<std::pair<int, std::string>>& in, std::queue<std::pair<int, std::string>>& out);
+    Game(std::queue<std::pair<int, std::string>>& in,
+        std::queue<std::pair<int, std::string>>& out,
+        std::mutex& incom_mtx, std::mutex& outgo_mtx);
     std::vector<std::string> userSetup();
     void setPlayerNames(const std::string &player1, const std::string &player2);
     void start(int player_num);
@@ -59,6 +61,9 @@ private:
 
     std::queue<std::pair<int, std::string>>& incoming;
     std::queue<std::pair<int, std::string>>& outgoing;
+    std::mutex& incoming_mtx;
+    std::mutex& outgoing_mtx;
+
     int screen_width = CELL_SIZE * BOARD_SIZE;
     int screen_height = CELL_SIZE * BOARD_SIZE;
     int target_fps = 60;
@@ -75,8 +80,14 @@ private:
 };
 
 
-Game::Game(std::queue<std::pair<int, std::string>>& in, std::queue<std::pair<int, std::string>>& out) : incoming(in),
-    outgoing(out), menu({screen_width, screen_height}) {
+Game::Game(std::queue<std::pair<int, std::string>>& in,
+    std::queue<std::pair<int, std::string>>& out,
+    std::mutex& incom_mtx, std::mutex& outgo_mtx) :
+    incoming(in),
+    outgoing(out),
+    incoming_mtx(incom_mtx),
+    outgoing_mtx(outgo_mtx),
+    menu({screen_width, screen_height}) {
     std::cout << "Game initializing\n";
     InitWindow(screen_width, screen_height, "Snake V. Snake");
 }
@@ -274,6 +285,7 @@ void Game::draw() {
 }
 
 void Game::decodeIncoming() {
+    std::lock_guard<std::mutex> lock(incoming_mtx);
     while (!incoming.empty()) {
 
         auto [key, val] = incoming.front();
@@ -341,6 +353,7 @@ void Game::decodeIncoming() {
                 game_over = true;
                 opponent.score = -1;   // ensure that disconnected player loses
                 num_rounds = 1;        // true game over
+                break;
             }
 
             default:
@@ -354,6 +367,7 @@ void Game::decodeIncoming() {
 }
 
 void Game::queueOutgoing() {
+    std::lock_guard<std::mutex> lock(outgoing_mtx);
     outgoing.push({MOVE, std::to_string(player.head.front().x) + "," + std::to_string(player.head.front().y)});
 }
 

@@ -11,7 +11,8 @@ class WSClient {
 public:
     WSClient(const std::string& url,
         std::queue<std::pair<int, std::string>>& incom,
-        std::queue<std::pair<int, std::string>>& outgo);
+        std::queue<std::pair<int, std::string>>& outgo,
+        std::mutex& incom_mtx, std::mutex& outgo_mtx);
     void setRoomId(const std::string& rid);
     void run();   // non-blocking
     void stop();
@@ -24,6 +25,8 @@ private:
     std::string room_id;
     std::queue<std::pair<int, std::string>>& incoming;
     std::queue<std::pair<int, std::string>>& outgoing;
+    std::mutex& incoming_mtx;
+    std::mutex& outgoing_mtx;
 
     int room_seat;
 

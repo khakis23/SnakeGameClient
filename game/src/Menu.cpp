@@ -186,7 +186,7 @@ Menu::Menu(int win_width, int win_height)
         Vec2{260, 40},
         Vec2{win_width / 2 - 210, ip_y},   // moved LEFT further
         "IP Address",
-        "192.168.0.205"
+        "snake.6amcoffee.org"
     );
 
     textboxes.emplace_back(
@@ -207,7 +207,7 @@ Menu::Menu(int win_width, int win_height)
         Vec2{win_width / 2 - 130, name_y},
         "Enter Name"
     );
-    inputs.reserve(4);
+    inputs.resize(4);
 }
 
 void Menu::run() {
