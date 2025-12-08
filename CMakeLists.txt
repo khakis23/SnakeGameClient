@@ -17,7 +17,7 @@ add_executable(SnakeClient main.cpp
         client/include/gamecodes.h
         client/src/SystemManager.cpp
         game/include/SnakeGame.h
-        game/include/TylerSnakeGame.h
+        game/include/Game.cpp
         game/include/Menu.h
         game/src/Menu.cpp
         client/include/Win32Startup.h
