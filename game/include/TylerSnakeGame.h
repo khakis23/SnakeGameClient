@@ -8,6 +8,15 @@
 #include "utils.h"
 #include "Menu.h"
 
+Color grey = { 202, 214, 173, 255 };
+Color blue = { 0, 191, 255, 255 };
+Color dBlue = { 0, 141, 205, 255 };
+Color orange = { 255, 100, 0, 255 };
+Color dOrange = { 205, 50, 0, 255 };
+Color pink = { 214, 173, 204, 255 };
+Color dPink = { 164, 0, 154, 255 };
+Color black = { 0, 0, 0, 255 };
+
 
 /*
  * TODO
@@ -283,25 +292,38 @@ void Game::draw() {
         cell_size = screen_size / BOARD_SIZE;
     }
 
-    ClearBackground(RAYWHITE);
+    ClearBackground(grey);
 
     // apple
-    DrawCircle(apple.pos.x * cell_size + cell_size / 2, apple.pos.y * cell_size + cell_size / 2, cell_size / 2, GREEN);
+    Rectangle appleOut = Rectangle{ apple.pos.x * cell_size, apple.pos.y * cell_size, cell_size, cell_size };
+    DrawRectangleRounded(appleOut, 0.5, 6, WHITE);
+    DrawRectangleRoundedLinesEx(appleOut, 0.5, 6, 2, black);
+    DrawCircle(apple.pos.x * cell_size + (cell_size / 2), apple.pos.y * cell_size + (cell_size / 2), (cell_size / 2) - 4, dPink);
+    DrawCircle(apple.pos.x * cell_size + (cell_size / 2), apple.pos.y * cell_size + (cell_size / 2), (cell_size / 2) - 6, pink);
+    DrawCircleLines(apple.pos.x * cell_size + (cell_size / 2), apple.pos.y * cell_size + (cell_size / 2), (cell_size / 2) - 6, black);
 
     // snakes
     for (auto&[x, y] : opponent.head) {
-        DrawRectangle(x * cell_size, y * cell_size, cell_size, cell_size, RED);
+        Rectangle segment = Rectangle{ (x * cell_size) + 2, (y * cell_size) + 2, cell_size - 4, cell_size - 4 };
+        Rectangle outline = Rectangle{ (x * cell_size), (y * cell_size), cell_size, cell_size };
+        DrawRectangleRounded(outline, 0.5, 6, black);
+        DrawRectangleRounded(segment, 0.5, 6, orange);
+        DrawRectangleRoundedLinesEx(outline, 0.5, 6, 2, dOrange);
     }
     for (auto&[x, y] : player.head) {
-        DrawRectangle(x * cell_size, y * cell_size, cell_size, cell_size, BLUE);
+        Rectangle segment = Rectangle{ (x * cell_size) + 2, (y * cell_size) + 2, cell_size - 4, cell_size - 4 };
+        Rectangle outline = Rectangle{ (x * cell_size), (y * cell_size), cell_size, cell_size };
+        DrawRectangleRounded(outline, 0.5, 6, black);
+        DrawRectangleRounded(segment, 0.5, 6, blue);
+        DrawRectangleRoundedLinesEx(outline, 0.5, 6, 2, dBlue);
     }
 
     // scores
     const std::string player_cstr = std::to_string(player.score);
     const std::string opp_cstr = opponent.score >= 0 ? std::to_string(opponent.score) : "Disconnected";
 
-    DrawText(opp_cstr.c_str(), 10, 10, FONT_SIZE, RED);
-    DrawText(player_cstr.c_str(), screen_size - MeasureText(player_cstr.c_str(), FONT_SIZE) - 10, 10, FONT_SIZE, BLUE);
+    DrawText(opp_cstr.c_str(), 10, 10, FONT_SIZE, orange);
+    DrawText(player_cstr.c_str(), screen_size - MeasureText(player_cstr.c_str(), FONT_SIZE) - 10, 10, FONT_SIZE, blue);
 
     // auxiliary text
     if (!aux_text1.empty()) {
@@ -313,7 +335,7 @@ void Game::draw() {
             DrawText(aux_text2.c_str(), mid, screen_size / 2 + 20, 14, BLACK);
         }
     }
-    EndDrawing();
+    EndDrawing()
 }
 
 void Game::decodeIncoming() {
