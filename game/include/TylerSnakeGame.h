@@ -13,14 +13,27 @@
  * TODO
  *  - Make Pretty
  *  - Make Customizable rounds (menu)
- *  - Make customizable board_size **complicated-ish
  *  - resizable window
- *  - player names! * easy!
+ *  - player names!
  *  - waiting on opponent after Menu ends
- *  - make work on Windows 11!
  */
 
-constexpr int CELL_SIZE = 20;
+
+// while (true ) {
+//     if (IsWindowResized()) {
+//         width = GetScreenWidth();
+//         height = GetScreenHeight();
+//
+//         win_size = width < height ? width : height
+//
+//         cell_size = win_size / board_size
+//         win_width = win_size;
+//         win_heigh = win_size;
+//     }
+// }
+
+
+constexpr int DEFAULT_CELL_SIZE = 20;
 constexpr int BOARD_SIZE = 30;   // must match server's GAME_SIZE
 constexpr int FONT_SIZE = 18;
 
@@ -64,8 +77,8 @@ private:
     std::mutex& incoming_mtx;
     std::mutex& outgoing_mtx;
 
-    int screen_width = CELL_SIZE * BOARD_SIZE;
-    int screen_height = CELL_SIZE * BOARD_SIZE;
+    int screen_size = DEFAULT_CELL_SIZE * BOARD_SIZE;
+    int cell_size = DEFAULT_CELL_SIZE;
     int target_fps = 60;
     bool running = false;
     bool game_over = false;
@@ -76,6 +89,7 @@ private:
     int num_rounds = 5;
     std::string aux_text1;
     std::string aux_text2;
+    Color aux_text1_color;
     Menu menu;
 };
 
@@ -87,9 +101,12 @@ Game::Game(std::queue<std::pair<int, std::string>>& in,
     outgoing(out),
     incoming_mtx(incom_mtx),
     outgoing_mtx(outgo_mtx),
-    menu({screen_width, screen_height}) {
+    aux_text1("Waiting on opponent..."),
+    aux_text1_color(BLACK),
+    menu({screen_size, screen_size}) {
     std::cout << "Game initializing\n";
-    InitWindow(screen_width, screen_height, "Snake V. Snake");
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    InitWindow(screen_size, screen_size, "Snake V. Snake");
 }
 
 std::vector<std::string> Game::userSetup() {
@@ -149,6 +166,7 @@ void Game::start(int player_num) {
     while (!GetKeyPressed()) {
         aux_text1 = "Player " + std::to_string(player.player);
         aux_text2 = "Press any key to start.";
+        aux_text1_color = BLUE;
         draw();
         if (WindowShouldClose()) {
             quit = true;
@@ -157,6 +175,7 @@ void Game::start(int player_num) {
     }
     aux_text1 = "Waiting on opponent...";
     aux_text2 = "";
+    aux_text1_color = BLACK;
     outgoing.emplace(READY, std::to_string(player_num));
 };
 
@@ -251,17 +270,30 @@ void Game::handleInput() {
 
 void Game::draw() {
     BeginDrawing();
+
+    // window was resized
+    // NOTE: this must live in a "polling event" like BeginDrawing()
+    if (IsWindowResized()) {
+        printf("Window resized!\n");
+        const int width = GetScreenWidth();
+        const int height = GetScreenHeight();
+
+        screen_size = width < height ? width : height;
+        SetWindowSize(screen_size, screen_size);
+        cell_size = screen_size / BOARD_SIZE;
+    }
+
     ClearBackground(RAYWHITE);
 
     // apple
-    DrawCircle(apple.pos.x * CELL_SIZE + CELL_SIZE / 2, apple.pos.y * CELL_SIZE + CELL_SIZE / 2, CELL_SIZE / 2, GREEN);
+    DrawCircle(apple.pos.x * cell_size + cell_size / 2, apple.pos.y * cell_size + cell_size / 2, cell_size / 2, GREEN);
 
     // snakes
     for (auto&[x, y] : opponent.head) {
-        DrawRectangle(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, RED);
+        DrawRectangle(x * cell_size, y * cell_size, cell_size, cell_size, RED);
     }
     for (auto&[x, y] : player.head) {
-        DrawRectangle(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, BLUE);
+        DrawRectangle(x * cell_size, y * cell_size, cell_size, cell_size, BLUE);
     }
 
     // scores
@@ -269,16 +301,16 @@ void Game::draw() {
     const std::string opp_cstr = opponent.score >= 0 ? std::to_string(opponent.score) : "Disconnected";
 
     DrawText(opp_cstr.c_str(), 10, 10, FONT_SIZE, RED);
-    DrawText(player_cstr.c_str(), screen_width - MeasureText(player_cstr.c_str(), FONT_SIZE) - 10, 10, FONT_SIZE, BLUE);
+    DrawText(player_cstr.c_str(), screen_size - MeasureText(player_cstr.c_str(), FONT_SIZE) - 10, 10, FONT_SIZE, BLUE);
 
     // auxiliary text
     if (!aux_text1.empty()) {
-        const int mid = screen_width / 2 - MeasureText(aux_text1.c_str(), 18) / 2;
-        DrawText(aux_text1.c_str(), mid, screen_height / 2 - 20, 18, BLACK);
+        const int mid = screen_size / 2 - MeasureText(aux_text1.c_str(), 18) / 2;
+        DrawText(aux_text1.c_str(), mid, screen_size / 2 - 20, 18, aux_text1_color);
 
         if (!aux_text2.empty()) {
-            const int mid = screen_width / 2 - MeasureText(aux_text2.c_str(), 14) / 2;
-            DrawText(aux_text2.c_str(), mid, screen_height / 2 + 20, 14, BLACK);
+            const int mid = screen_size / 2 - MeasureText(aux_text2.c_str(), 14) / 2;
+            DrawText(aux_text2.c_str(), mid, screen_size / 2 + 20, 14, BLACK);
         }
     }
     EndDrawing();

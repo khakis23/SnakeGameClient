@@ -8,7 +8,7 @@ TODO
 ## General Architecture
 TODO
 
-![Client Architecture Diagram](readmeAssets/ClientArch.png)
+![Client Architecture Diagram](Assets/ClientArch.png)
 
 ## Game Architecture
 TODO BLAINE

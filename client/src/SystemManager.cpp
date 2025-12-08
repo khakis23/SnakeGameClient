@@ -8,7 +8,7 @@ void SystemManager::run() {
     // Game setup (menu)
     Game game(incoming, outgoing, incoming_mtx, outgoing_mtx);
     SetTargetFPS(60);
-    const auto user_inputs = game.userSetup();   // IP, Port, RoomID, PlayerName
+    const auto user_inputs = game.userSetup();   // IP, Port, RoomID
 
     for (auto& input : user_inputs) {
         std::cout << input << '\n';

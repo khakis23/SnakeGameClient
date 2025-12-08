@@ -21,7 +21,10 @@ add_executable(SnakeClient main.cpp
         game/include/Menu.h
         game/src/Menu.cpp
         client/include/Win32Startup.h
-        client/src/Win32Startup.cpp)
+        client/src/Win32Startup.cpp
+        WindowsBuildFiles/resource.h
+        WindowsBuildFiles/app.rc   # for windows release build
+)
 
 target_include_directories(SnakeClient PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/client/include
@@ -47,6 +50,9 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows" OR WIN32)    # obviously windows
     message(STATUS "Cross-compiling for Windows!")
     target_link_libraries(SnakeClient PRIVATE winmm)
 endif()
+
+set_target_properties(SnakeClient PROPERTIES WIN32_EXECUTABLE TRUE)   # when building release for Windows
+set_target_properties(SnakeClient PROPERTIES WIN32_EXECUTABLE TRUE)   # when building release for Windows
 
 get_target_property(IX_INC ixwebsocket::ixwebsocket INTERFACE_INCLUDE_DIRECTORIES)
 target_include_directories(SnakeClient PRIVATE ${IX_INC})
