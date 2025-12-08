@@ -335,7 +335,7 @@ void Game::draw() {
             DrawText(aux_text2.c_str(), mid, screen_size / 2 + 20, 14, BLACK);
         }
     }
-    EndDrawing()
+    EndDrawing();
 }
 
 void Game::decodeIncoming() {
