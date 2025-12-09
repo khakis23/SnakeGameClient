@@ -2,7 +2,7 @@
 ## Client
 ### Authors: Tyler Black, Blaine Morton
 
-The client application for the 2-player snake game ([server repo found here](https://github.com/khakis23/SnakeGameServer))
+The client application for the 2-player snake game ([server repo found here](https://github.com/khakis23/SnakeGameServer)).
 SnakeClient is a thin client that processes server messages and
 updates the game state accordingly. The client handles user I/O and holds the
 game tick and some game state. Graphics are handled by the cross-platform
