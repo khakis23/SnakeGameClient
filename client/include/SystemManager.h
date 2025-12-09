@@ -1,9 +1,7 @@
-
 #ifndef SNAKECLIENT_SYSTEMMANAGER_H
 #define SNAKECLIENT_SYSTEMMANAGER_H
 #include <queue>
 #include "WSClient.h"
-#include "DebugGame.h"
 
 
 class SystemManager {

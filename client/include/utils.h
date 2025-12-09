@@ -3,6 +3,16 @@
 #include <iostream>
 #include <unordered_map>
 #include <type_traits>
+#include "Raylib.h"
+
+constexpr Color grey = { 202, 214, 173, 255 };
+constexpr Color blue = { 0, 191, 255, 255 };
+constexpr Color dBlue = { 0, 141, 205, 255 };
+constexpr Color orange = { 255, 100, 0, 255 };
+constexpr Color dOrange = { 205, 50, 0, 255 };
+constexpr Color pink = { 214, 173, 204, 255 };
+constexpr Color dPink = { 164, 0, 154, 255 };
+constexpr Color black = { 0, 0, 0, 255 };
 
 
 struct Vec2 {

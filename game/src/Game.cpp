@@ -1,13 +1,13 @@
-#ifndef SNAKECLIENT_TYLERSNAKEGAME_H
-#define SNAKECLIENT_TYLERSNAKEGAME_H
 #include <iostream>
 #include <queue>
 #include <list>
+#include <mutex>
 #include "raylib.h"
 #include "gamecodes.h"
 #include "utils.h"
 #include "Menu.h"
 #include "Game.h"
+
 
 Game::Game(std::queue<std::pair<int, std::string>>& in,
     std::queue<std::pair<int, std::string>>& out,
@@ -189,7 +189,6 @@ void Game::draw() {
     // window was resized
     // NOTE: this must live in a "polling event" like BeginDrawing()
     if (IsWindowResized()) {
-        printf("Window resized!\n");
         const int width = GetScreenWidth();
         const int height = GetScreenHeight();
 
@@ -201,7 +200,7 @@ void Game::draw() {
     ClearBackground(grey);
 
     // apple
-    Rectangle appleOut = Rectangle{ apple.pos.x * cell_size, apple.pos.y * cell_size, cell_size, cell_size };
+    Rectangle appleOut = Rectangle{ float(apple.pos.x * cell_size), float(apple.pos.y) * cell_size, float(cell_size), float(cell_size) };
     DrawRectangleRounded(appleOut, 0.5, 6, WHITE);
     DrawRectangleRoundedLinesEx(appleOut, 0.5, 6, 2, black);
     DrawCircle(apple.pos.x * cell_size + (cell_size / 2), apple.pos.y * cell_size + (cell_size / 2), (cell_size / 2) - 4, dPink);
@@ -210,15 +209,26 @@ void Game::draw() {
 
     // snakes
     for (auto& [x, y] : opponent.head) {
-        Rectangle segment = Rectangle{ (x * cell_size) + 2, (y * cell_size) + 2, cell_size - 4, cell_size - 4 };
-        Rectangle outline = Rectangle{ (x * cell_size), (y * cell_size), cell_size, cell_size };
+        Rectangle segment = Rectangle{ float(x * cell_size) + 2, float(y * cell_size) + 2, float(cell_size - 4), float(cell_size - 4) };
+        Rectangle outline = Rectangle{ float(x * cell_size), float(y * cell_size), float(cell_size), float(cell_size) };
         DrawRectangleRounded(outline, 0.5, 6, black);
         DrawRectangleRounded(segment, 0.5, 6, orange);
         DrawRectangleRoundedLinesEx(outline, 0.5, 6, 2, dOrange);
     }
     for (auto& [x, y] : player.head) {
-        Rectangle segment = Rectangle{ (x * cell_size) + 2, (y * cell_size) + 2, cell_size - 4, cell_size - 4 };
-        Rectangle outline = Rectangle{ (x * cell_size), (y * cell_size), cell_size, cell_size };
+        Rectangle segment = Rectangle{
+            float(x * cell_size + 2),
+            float(y * cell_size + 2),
+            float(cell_size - 4),
+            float(cell_size - 4)
+        };
+
+        Rectangle outline = Rectangle{
+            float(x * cell_size),
+            float(y * cell_size),
+            float(cell_size),
+            float(cell_size)
+        };
         DrawRectangleRounded(outline, 0.5, 6, black);
         DrawRectangleRounded(segment, 0.5, 6, blue);
         DrawRectangleRoundedLinesEx(outline, 0.5, 6, 2, dBlue);
@@ -228,8 +238,8 @@ void Game::draw() {
     const std::string player_cstr = std::to_string(player.score);
     const std::string opp_cstr = opponent.score >= 0 ? std::to_string(opponent.score) : "Disconnected";
 
-    DrawText(opp_cstr.c_str(), 10, 10, FONT_SIZE, orange);
-    DrawText(player_cstr.c_str(), screen_size - MeasureText(player_cstr.c_str(), FONT_SIZE) - 10, 10, FONT_SIZE, blue);
+    DrawText(opp_cstr.c_str(), 10, 10, font_size, orange);
+    DrawText(player_cstr.c_str(), screen_size - MeasureText(player_cstr.c_str(), font_size) - 10, 10, font_size, blue);
 
     // auxiliary text
     if (!aux_text1.empty()) {
@@ -276,6 +286,7 @@ void Game::decodeIncoming() {
         }
 
         case SCORE: {
+            std::cout << "New Score: " << val << "\n";
             Vec2 scores = strToVec2(val);
             if (player.player == 1) {
                 player.score = scores.x;
@@ -348,6 +359,3 @@ void Game::updateOpponent(Vec2& coords) {
     else
         opponent.head.pop_back();
 }
-
-
-#endif //SNAKECLIENT_TYLERSNAKEGAME_H

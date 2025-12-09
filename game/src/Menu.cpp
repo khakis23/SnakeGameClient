@@ -173,7 +173,8 @@ Menu::Menu(int win_width, int win_height)
           {120, 40},
           {win_width / 2 - 60, win_height / 2 + 120},   // moved LOWER
           "join",
-          DARKGREEN),
+          dBlue,
+          BLACK),
     win_height(win_height),
     win_width(win_width)
 {
@@ -215,7 +216,7 @@ void Menu::run() {
     Vector2 mouse_pos = GetMousePosition();
 
     BeginDrawing();
-    ClearBackground(RAYWHITE);
+    ClearBackground({ 202, 214, 173, 255 });
 
     // start button pressed
     if (start_button.isPressed(mouse_pos)) {

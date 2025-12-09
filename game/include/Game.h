@@ -1,26 +1,17 @@
-#ifndef SNAKECLIENT_TYLERSNAKEGAME_H
-#define SNAKECLIENT_TYLERSNAKEGAME_H
+#ifndef SNAKECLIENT_GAME_H
+#define SNAKECLIENT_GAME_H
 #include <iostream>
 #include <queue>
 #include <list>
+#include <thread>
 #include "raylib.h"
 #include "gamecodes.h"
 #include "utils.h"
 #include "Menu.h"
 
-Color grey = { 202, 214, 173, 255 };
-Color blue = { 0, 191, 255, 255 };
-Color dBlue = { 0, 141, 205, 255 };
-Color orange = { 255, 100, 0, 255 };
-Color dOrange = { 205, 50, 0, 255 };
-Color pink = { 214, 173, 204, 255 };
-Color dPink = { 164, 0, 154, 255 };
-Color black = { 0, 0, 0, 255 };
-
 
 /*
  * TODO
- *  - Make Pretty
  *  - Make Customizable rounds (menu)
  *  - resizable window
  *  - player names!
@@ -28,23 +19,9 @@ Color black = { 0, 0, 0, 255 };
  */
 
 
-// while (true ) {
-//     if (IsWindowResized()) {
-//         width = GetScreenWidth();
-//         height = GetScreenHeight();
-//
-//         win_size = width < height ? width : height
-//
-//         cell_size = win_size / board_size
-//         win_width = win_size;
-//         win_heigh = win_size;
-//     }
-// }
-
-
 constexpr int DEFAULT_CELL_SIZE = 20;
 constexpr int BOARD_SIZE = 30;   // must match server's GAME_SIZE
-constexpr int FONT_SIZE = 18;
+constexpr int DEFAULT_FONT_SIZE = 18;
 
 
 struct Snake {
@@ -88,6 +65,7 @@ private:
 
     int screen_size = DEFAULT_CELL_SIZE * BOARD_SIZE;
     int cell_size = DEFAULT_CELL_SIZE;
+    int font_size = DEFAULT_FONT_SIZE;
     int target_fps = 60;
     bool running = false;
     bool game_over = false;
@@ -103,3 +81,4 @@ private:
 };
 
 
+#endif

@@ -9,15 +9,15 @@ find_package(ixwebsocket CONFIG REQUIRED)
 find_package(raylib CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)   # RayLib dependency
 
-add_executable(SnakeClient main.cpp
+add_executable(SnakeClient
+        main.cpp
         client/include/WSClient.h
         client/include/utils.h
         client/src/WSClient.cpp
-        DebugGame/DebugGame.h
         client/include/gamecodes.h
         client/src/SystemManager.cpp
-        game/include/SnakeGame.h
-        game/include/Game.cpp
+        game/include/Game.h
+        game/src/Game.cpp
         game/include/Menu.h
         game/src/Menu.cpp
         client/include/Win32Startup.h
@@ -28,7 +28,6 @@ add_executable(SnakeClient main.cpp
 
 target_include_directories(SnakeClient PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/client/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/DebugGame
         ${CMAKE_CURRENT_SOURCE_DIR}/game/include
 )
 
