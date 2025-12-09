@@ -17,7 +17,12 @@ System Manager.
 ![Client Architecture Diagram](Assets/ClientArch.png)
 
 ## Game Architecture
-TODO BLAINE
+The game Architecture is really simple, making use of vectors to keep track of 
+positions within the play grid. the snake is a queue of the vectors that can
+easily be modified with push and pop functions as well as comparison to other vector coordinates 
+such as the position of the fruit, the opposing snake, and the walls. the majority of the 
+program is comparing the vectors to see when they overlap, and updating the game according
+to wether they collided or not.
 
 ## Message Protocol
 
